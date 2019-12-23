@@ -29,7 +29,7 @@ def handle_friend_msg(msg):
                     itchat.send_file('robot_config.xlsx', toUserName=msg['FromUserName'])
                     print("Robot sent your file." + msg['User']['NickName'])
             if msg['Type'] == ATTACHMENT and msg['FileName'] == "robot_config.xlsx":
-                msg.download('/Users/nicholas/PycharmProjects/WeChat_Robot/' + msg['FileName'])
+                msg.download(msg['FileName'])
                 itchat.send("Robot received your config file.", toUserName=msg['FromUserName'])
                 print("Robot received your file." + msg['User']['NickName'])
     except Exception as e:

@@ -16,6 +16,19 @@ import sys
 import os,time
 from convert import convert 
 
+#record log
+class Logger(object):
+    def __init__(self, filename='default.log', stream=sys.stdout):
+        self.terminal = stream
+        self.log = open(filename, 'w')
+ 
+    def write(self, message):
+        self.terminal.write(message)
+        self.log.write(message)
+ 
+    def flush(self):
+        pass
+
 # User message monitoring
 @itchat.msg_register([TEXT, PICTURE, RECORDING, ATTACHMENT, VIDEO], isFriendChat=True)
 def handle_friend_msg(msg):
@@ -189,7 +202,10 @@ def main(argv):
     data = {}
     sched = BlockingScheduler()
     # Auto re-login
-    itchat.auto_login(hotReload=True, loginCallback=after_login, exitCallback=after_logout)
+    try:
+        itchat.auto_login(hotReload=True, loginCallback=after_login, exitCallback=after_logout,enableCmdQR=2)
+    except Exception:
+
     time.sleep(5)  # 5 sec for ready
 
     # t1 = threading.Thread(target=itchat.run(), args=())

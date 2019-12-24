@@ -11,3 +11,13 @@
 
 5. 运行命令 python app.py host      port user password     database or python3 app.py host port user password database
     例子： python3 app.py 127.0.0.1 3306 root ZRJ19920708 itchat
+    
+6.数据库新建： 1. create database itchat;
+             2. CREATE TABLE CHAT_CONTENT(
+                  uuid     CHAR(30),
+                  WechatID CHAR(30) NOT NULL,
+                  Content  TEXT,
+                  Time     TIMESTAMP,
+                  GroupName TEXT, 
+                  GroupSize INT
+                )ENGINE=innodb DEFAULT CHARSET=utf8;

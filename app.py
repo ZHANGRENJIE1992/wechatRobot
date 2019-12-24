@@ -205,6 +205,7 @@ def main(argv):
     try:
         itchat.auto_login(hotReload=True, loginCallback=after_login, exitCallback=after_logout)
     except Exception:
+        print("fine")
 
     time.sleep(5)  # 5 sec for ready
 

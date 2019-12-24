@@ -32,7 +32,7 @@ class Logger(object):
 # User message monitoring
 @itchat.msg_register([TEXT, PICTURE, RECORDING, ATTACHMENT, VIDEO], isFriendChat=True)
 def handle_friend_msg(msg):
-    df = pd.read_excel('robot_config.xlsx', sheet_name='Config')
+    df = pd.read_excel('./robot_config.xlsx', sheet_name='Config')
     print("handle_friend_msg")
     # Send command and Get response from FileHelper
     try:
@@ -41,7 +41,7 @@ def handle_friend_msg(msg):
                 itchat.send("Robot received admin message.", toUserName=msg['FromUserName'])
                 print("Robot received your message." + msg['User']['NickName'])
                 if "request" in msg['Content']:
-                    itchat.send_file('robot_config.xlsx', toUserName=msg['FromUserName'])
+                    itchat.send_file('./robot_config.xlsx', toUserName=msg['FromUserName'])
                     print("Robot sent your file." + msg['User']['NickName'])
             if msg['Type'] == ATTACHMENT and msg['FileName'] == "robot_config.xlsx":
                 msg.download(msg['FileName'])
@@ -61,7 +61,7 @@ def handle_friend_msg(msg):
 def handle_group_msg(msg):
     target_group = []
     try:
-        df = pd.read_excel('robot_config.xlsx', sheet_name='Target Groups')
+        df = pd.read_excel('./robot_config.xlsx', sheet_name='Target Groups')
     except Exception as e:
         print(e)
     for group_name in list(df['Target Groups']):
@@ -76,13 +76,13 @@ def handle_group_msg(msg):
            now_str = now.strftime("%Y-%m-%dT%H:%M:%S")
            sql.create_data(wechatid=str(msg['ActualNickName']),content=str(msg['Content']),time=str(now_str),groupid=str(msg['User']['NickName']),groupsize=str(msg['User']['MemberCount']))
         if msg.isAt:  # Check if robot is @
-            df = pd.read_excel('robot_config.xlsx', sheet_name='QA')
+            df = pd.read_excel('./robot_config.xlsx', sheet_name='QA')
             question = list(df['Q'])
             answer = list(df['A'])
-            df = pd.read_excel('robot_config.xlsx', sheet_name='Config')
+            df = pd.read_excel('./robot_config.xlsx', sheet_name='Config')
             robot_name = df['Robot name'][0]
             msg_q = msg['Text'].replace("@" + robot_name + "\u2005", "", 1).strip()
-            print("aaa:",msg_q)
+            #print("aaa:",msg_q)
             if msg_q == "":
                 answerguide = "请使用@小助手 + 以下关键字:'参观时间','闭馆时间','门票','门票优惠','团队购票','免票','讲解','地址','怎么去博物馆','电话','发票',来获取相关信息"
                 itchat.send_msg(answerguide,toUserName=msg['FromUserName'])
@@ -109,8 +109,8 @@ def handle_group_msg(msg):
 def send_sched_msg():
     target_group = []
     name = generate_dailydata()
-    df = pd.read_excel('robot_config.xlsx', sheet_name='Target Groups')
-    df_admin = pd.read_excel('robot_config.xlsx', sheet_name='Config') #找出config表中的admin
+    df = pd.read_excel('./robot_config.xlsx', sheet_name='Target Groups')
+    df_admin = pd.read_excel('./robot_config.xlsx', sheet_name='Config') #找出config表中的admin
     name = generate_dailydata()
     AdminUserName_group=[]
     for admins in list(df_admin['Robot name']):
@@ -129,7 +129,7 @@ def send_sched_msg():
 
 def scheduler_msg():
     while True:
-        df = pd.read_excel('robot_config.xlsx', sheet_name='Scheduler')
+        df = pd.read_excel('./robot_config.xlsx', sheet_name='Scheduler')
         # print(df)
         time.sleep(60)
         now = datetime.datetime.now()
@@ -164,13 +164,13 @@ def after_logout():
 
 def save_data():
     current_date = time.strftime('%Y%m%d', time.localtime(time.time()))
-    data.to_excel(current_date + '.xlsx', sheet_name='data2', index = False)
+    data.to_excel("./"+current_date + '.xlsx', sheet_name='data2', index = False)
     itchat.send_msg("Data saved.", toUserName="filehelper")
 
 
 def send_data():
     current_date = time.strftime('%Y%m%d', time.localtime(time.time()))
-    itchat.send_file(current_date + '.xlsx', toUserName="filehelper")
+    itchat.send_file("./"+current_date + '.xlsx', toUserName="filehelper")
     itchat.send_msg("Data sent.", toUserName="filehelper")
 
 def generate_dailydata():
@@ -190,8 +190,9 @@ def generate_dailydata():
 
     obj = {}
     obj["title"]= ["日期","时间段","群昵称","群人数","活跃数","活跃账号","关键词参观时间出现次数","关键词闭馆时间出现次数","关键词门票出现次数","关键词门票优惠出现次数","关键词团队购票出现次数","关键词免票出现次数","关键词讲解出现次数","关键词地址出现次数","关键词怎么去博物馆出现次数","关键词电话出现次数","关键词发票出现次数"]
+    prefix = "./"
     fix = "daily.xls"
-    name = f"{now_str}_{fix}"
+    name = f"{prefix}{now_str}_{fix}"
     excel = Excel()
     wb = excel.createExcel(obj["title"], export_dataset,name)
     return name

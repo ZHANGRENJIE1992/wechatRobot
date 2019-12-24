@@ -12,7 +12,9 @@ import datetime
 from model import db
 from common import Excel
 from data import *
-
+import sys
+import os,time
+from convert import convert 
 
 # User message monitoring
 @itchat.msg_register([TEXT, PICTURE, RECORDING, ATTACHMENT, VIDEO], isFriendChat=True)
@@ -56,7 +58,7 @@ def handle_group_msg(msg):
     if msg['FromUserName'] in target_group:
         #print(msg)
         if(msg['Type']=='Text'):
-           sql =db()
+           sql =db(keyinfo)
            now = datetime.datetime.now()
            now_str = now.strftime("%Y-%m-%dT%H:%M:%S")
            sql.create_data(wechatid=str(msg['ActualNickName']),content=str(msg['Content']),time=str(now_str),groupid=str(msg['User']['NickName']),groupsize=str(msg['User']['MemberCount']))
@@ -165,7 +167,7 @@ def generate_dailydata():
     #export_data = {} #单个群数据字典 {"sheet_name": groupname,"data":meta_data}
     #metaData = []#单个数据字典中的数据 一共6个不同时间段的数组 
     #timeData = []#单个数据时间段的数组 "日期","时间段","群昵称","群人数","新增人数","活跃数","活跃账号","关键词参观时间出现次数","关键词闭馆时间出现次数","关键词门票出现次数","关键词门票优惠出现次数","关键词团队购票出现次数","关键词免票出现次数","关键词讲解出现次数","关键词地址出现次数","关键词怎么去博物馆出现次数","关键词电话出现次数","关键词发票出现次数"
-    sql=db()
+    sql=db(keyinfo)
     rawdata = sql.get_dailyinfo(now.year,now.month,now.day)
     #print(rawdata)
     groupname = handle_rawdata_groupname(rawdata)
@@ -180,10 +182,10 @@ def generate_dailydata():
     excel = Excel()
     wb = excel.createExcel(obj["title"], export_dataset,name)
     return name
-    
 
-if __name__ == '__main__':
-    # Initialize the robot
+def main(argv):
+    global keyinfo
+    keyinfo = convert(argv)
     data = {}
     sched = BlockingScheduler()
     # Auto re-login
@@ -196,4 +198,12 @@ if __name__ == '__main__':
     # t2.start()
     _thread.start_new_thread(scheduler_msg, ())
     _thread.start_new_thread(itchat.run(), ())
+
+
+if __name__ == '__main__':
+    # Initialize the robot
+    
+    main(sys.argv)
+    
+    
 

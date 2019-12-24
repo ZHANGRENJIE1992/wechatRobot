@@ -7,19 +7,25 @@ def createuuid():
 
 
 class db(object):
-	def __init__(self):
-		self.get_conn()
+	def __init__(self,keyinfo):
+		self.get_conn(keyinfo)
 	# 打开数据库连接
-	def get_conn(self):
+	def get_conn(self,keyinfo):
 		try:
 			self.a = 1
 			self.conn = pymysql.connect(
-				host='127.0.0.1',
-				port=3306,
-				user='root',
-				password='ZRJ19920708',
+				#host='127.0.0.1',
+				#port=3306,
+				#user='root',
+				#password='ZRJ19920708',
+				#charset='utf8',
+				#database='itchat'
+				host=keyinfo[0],
+				port=int(keyinfo[1]),
+				user=keyinfo[2],
+				password=keyinfo[3],
 				charset='utf8',
-				database='itchat'
+				database=keyinfo[4]
 				#,
 				#cursor=pymysql.cursors.DictCursor
 			)

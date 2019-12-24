@@ -203,7 +203,7 @@ def main(argv):
     sched = BlockingScheduler()
     # Auto re-login
     try:
-        itchat.auto_login(hotReload=True, loginCallback=after_login, exitCallback=after_logout,enableCmdQR=2)
+        itchat.auto_login(hotReload=True, loginCallback=after_login, exitCallback=after_logout)
     except Exception:
 
     time.sleep(5)  # 5 sec for ready

@@ -123,16 +123,14 @@ def send_sched_msg():
 def scheduler_msg():
     while True:
         df = pd.read_excel('./robot_config.xlsx', sheet_name='Scheduler')
-        # print(df)
-        """time.sleep(60)
+        time.sleep(60)
         now = datetime.datetime.now()
         now_str = now.strftime('%Y/%m/%d %H:%M')[11:]
         set_time = str(df['Time'][0])
         print(now_str)
         print(set_time)
-        if now_str == set_time:"""
-        send_sched_msg()
-        time.sleep(5)
+        if now_str == set_time:
+            send_sched_msg()
 
 def daily_report():
     while True:

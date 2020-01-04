@@ -108,20 +108,13 @@ def handle_group_msg(msg):
 
 def send_sched_msg():
     target_group = []
-    name = generate_dailydata()
     df = pd.read_excel('./robot_config.xlsx', sheet_name='Target Groups')
-    df_admin = pd.read_excel('./robot_config.xlsx', sheet_name='Config') #找出config表中的admin
-    name = generate_dailydata()
-    AdminUserName_group=[]
-    for admins in list(df_admin['Robot name']):
-        user = itchat.search_friends(admins)
-        itchat.send_file(name, toUserName=user[0]['UserName'])
-
     for group_name in list(df['Target Groups']):
-        chat_rooms = itchat.search_chatrooms(name=group_name)
+        chat_rooms = itchat.search_chatrooms(name=group_name)#
         if(chat_rooms):
             target_group.append(chat_rooms[0]['UserName'])
     for g in target_group:
+        print("what send",str(df['Scheduler Content'][0]))
         itchat.send_msg(str(df['Scheduler Content'][0]),
                         toUserName=g)
 
@@ -131,15 +124,33 @@ def scheduler_msg():
     while True:
         df = pd.read_excel('./robot_config.xlsx', sheet_name='Scheduler')
         # print(df)
-        time.sleep(60)
+        """time.sleep(60)
         now = datetime.datetime.now()
         now_str = now.strftime('%Y/%m/%d %H:%M')[11:]
         set_time = str(df['Time'][0])
         print(now_str)
         print(set_time)
-        if now_str == set_time:
-            send_sched_msg()
+        if now_str == set_time:"""
+        send_sched_msg()
+        time.sleep(5)
 
+def daily_report():
+    while True:
+        time.sleep(60)
+        now = datetime.datetime.now()
+        now_str = now.strftime('%Y/%m/%d %H:%M')[11:]
+        set_time = "20:36"
+        #print(now_str)
+        #print(set_time)
+        if now_str == set_time:
+            send_daily_report()
+
+def send_daily_report():
+    name = generate_dailydata()
+    df_admin = pd.read_excel('./robot_config.xlsx', sheet_name='Config') #找出config表中的admin
+    for admins in list(df_admin['Robot name']):
+        user = itchat.search_friends(admins)
+        itchat.send_file(name, toUserName=user[0]['UserName'])
 
 # Show login success message
 def after_login():
@@ -214,8 +225,10 @@ def main(argv):
     # t2 = threading.Thread(target=scheduler_msg, args=())
     # t1.start()
     # t2.start()
+    _thread.start_new_thread(daily_report,())
     _thread.start_new_thread(scheduler_msg, ())
     _thread.start_new_thread(itchat.run(), ())
+    
 
 
 if __name__ == '__main__':
